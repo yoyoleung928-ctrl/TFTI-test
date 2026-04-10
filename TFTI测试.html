@@ -1,0 +1,793 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes, viewport-fit=cover">
+    <title>TFTI练格测试 | 多彩人格主题</title>
+    <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        /* 基础样式（题目页保持不变） */
+        body {
+            background: linear-gradient(135deg, #e8f5e9 0%, #fce4ec 100%);
+            font-family: system-ui, -apple-system, 'Segoe UI', 'PingFang SC', Roboto, 'Helvetica Neue', sans-serif;
+            color: #2c3e2f;
+            padding: 1.2rem 1rem 2.5rem;
+            min-height: 100vh;
+            transition: background 0.3s ease;
+        }
+
+        .container {
+            max-width: 700px;
+            margin: 0 auto;
+            position: relative;
+            z-index: 2;
+        }
+
+        .hero {
+            text-align: center;
+            margin-bottom: 2rem;
+            background: rgba(255, 248, 225, 0.9);
+            border-radius: 1.5rem;
+            padding: 1.2rem 1rem;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+            border: 1px solid #ffe0b5;
+        }
+
+        .hero h1 {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: #e67e22;
+            letter-spacing: -0.3px;
+        }
+
+        .hero p {
+            color: #d67e2e;
+            margin-top: 0.5rem;
+            font-size: 0.85rem;
+            font-weight: 500;
+        }
+
+        .card {
+            background: rgba(255, 253, 245, 0.95);
+            border-radius: 1.5rem;
+            border: 1px solid #ffe0b5;
+            box-shadow: 0 6px 14px rgba(0,0,0,0.05);
+            padding: 1.5rem 1.2rem;
+            transition: all 0.3s ease;
+        }
+
+        .progress-area {
+            margin-bottom: 1.5rem;
+        }
+
+        .progress-stats {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.75rem;
+            font-weight: 600;
+            color: #e67e22;
+        }
+
+        .progress-bar-bg {
+            background: #f0e2c5;
+            border-radius: 40px;
+            height: 6px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            background: #f5bc2c;
+            width: 0%;
+            height: 100%;
+            border-radius: 40px;
+            transition: width 0.25s ease;
+        }
+
+        .question-text {
+            font-size: 1.35rem;
+            font-weight: 600;
+            line-height: 1.4;
+            margin-bottom: 1.8rem;
+            color: #2c3e2f;
+        }
+
+        .options-list {
+            display: flex;
+            flex-direction: column;
+            gap: 0.8rem;
+            margin-bottom: 2rem;
+        }
+
+        .option-btn {
+            background: #fffaf2;
+            border: 1px solid #f5d6a8;
+            border-radius: 60px;
+            padding: 0.85rem 1.2rem;
+            font-size: 0.9rem;
+            font-weight: 500;
+            text-align: left;
+            color: #5a3e1b;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .option-btn:hover {
+            background: #fff0d4;
+            border-color: #f5bc2c;
+        }
+
+        .option-prefix {
+            background: #f5e2c0;
+            width: 28px;
+            height: 28px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 60px;
+            font-weight: 700;
+            font-size: 0.8rem;
+            color: #e67e22;
+        }
+
+        .option-btn.selected {
+            background: #fff0d4;
+            border-left: 3px solid #f5bc2c;
+            border-color: #f5bc2c;
+        }
+
+        .nav-buttons {
+            display: flex;
+            justify-content: space-between;
+            gap: 1rem;
+            margin-top: 0.5rem;
+        }
+
+        .nav-btn {
+            background: #fffaf2;
+            border: 1px solid #f5d6a8;
+            border-radius: 60px;
+            padding: 0.7rem 1rem;
+            font-weight: 600;
+            color: #e67e22;
+            cursor: pointer;
+            flex: 1;
+            text-align: center;
+        }
+
+        .nav-btn.primary {
+            background: #f5bc2c;
+            color: #2c2b28;
+            border: none;
+            font-weight: 700;
+        }
+
+        .nav-btn:active {
+            transform: scale(0.97);
+        }
+
+        /* 结果页样式（动态主题） */
+        .result-card {
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+
+        .result-prefix {
+            font-size: 0.85rem;
+            margin-bottom: 0.25rem;
+        }
+
+        .result-abbr {
+            font-size: 2.2rem;
+            font-weight: 800;
+            letter-spacing: 1px;
+        }
+
+        .result-name {
+            font-size: 1.6rem;
+            font-weight: 700;
+            margin-top: 0.2rem;
+            margin-bottom: 0.8rem;
+        }
+
+        .result-quote {
+            font-style: italic;
+            font-size: 1rem;
+            margin: 0.75rem 0;
+            text-align: center;
+        }
+
+        .result-subtitle {
+            font-size: 1rem;
+            font-weight: 700;
+            display: inline-block;
+            padding: 0.3rem 1rem;
+            border-radius: 2rem;
+            margin: 0.5rem auto;
+        }
+
+        .result-reverse {
+            font-size: 0.95rem;
+            margin-top: 0.5rem;
+            text-align: center;
+        }
+
+        .result-hyrox-block {
+            padding: 1rem;
+            border-radius: 1rem;
+            margin: 1.2rem 0 0.8rem;
+            text-align: center;
+        }
+
+        .result-hyrox {
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+
+        .result-link {
+            font-weight: 700;
+            font-size: 0.9rem;
+        }
+        .result-link a {
+            text-decoration: none;
+            border-bottom: 1px solid;
+        }
+
+        .share-btn, .retake-btn {
+            margin-top: 1rem;
+            border: none;
+            border-radius: 60px;
+            padding: 0.8rem 1.2rem;
+            font-weight: 700;
+            font-size: 0.95rem;
+            cursor: pointer;
+            width: 100%;
+            transition: 0.2s;
+            text-align: center;
+        }
+        .retake-btn {
+            background: rgba(255,255,240,0.9);
+            border: 1px solid;
+        }
+        .share-btn:active, .retake-btn:active {
+            transform: scale(0.97);
+        }
+
+        footer {
+            text-align: center;
+            margin-top: 2rem;
+            font-size: 0.65rem;
+            color: #b0a088;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <div class="hero">
+        <h1>TFTI练格测试</h1>
+        <p>AI作品仅供娱乐</p>
+    </div>
+    <div id="app"></div>
+    <footer>多彩人格主题 · 测出你的训练灵魂</footer>
+</div>
+
+<script>
+    // ==================== 人格数据库 + 独立配色主题 ====================
+    const PERSONALITIES = {
+        PRH: { 
+            abbr: "PRH", name: "PR猎手", 
+            quote: "只要榜上有我名，哪怕练完就断气。", 
+            subtitle: "你的快乐，写在每一次刷新PR里", 
+            reverse: "但你也可能是最容易把自己练废的那一类人", 
+            hyrox: "来Hyrox成都站，刷个国际认证的PR",
+            theme: {
+                bgGrad: "linear-gradient(135deg, #ffecd2 0%, #fcb69f 100%)",
+                cardBg: "#fff5ed",
+                borderColor: "#fc9e6d",
+                primary: "#d9480f",
+                secondary: "#f59e0b",
+                textDark: "#4a2a1a",
+                textLight: "#b95a2a"
+            }
+        },
+        TEC: { 
+            abbr: "TEC", name: "细腻匠人", 
+            quote: "杠铃轨迹不完美，我的灵魂不完整。", 
+            subtitle: "你不是慢，你是在打磨极限细节", 
+            reverse: "但有时候，你也在和进步速度对着干", 
+            hyrox: "用你教科书般的动作，优雅地推完雪橇",
+            theme: {
+                bgGrad: "linear-gradient(135deg, #e0f2fe 0%, #bae6fd 100%)",
+                cardBg: "#f0f9ff",
+                borderColor: "#7dd3fc",
+                primary: "#0369a1",
+                secondary: "#0ea5e9",
+                textDark: "#164863",
+                textLight: "#4285b4"
+            }
+        },
+        RXP: { 
+            abbr: "RXP", name: "头铁玩家", 
+            quote: "只要练不死，就往死里练。", 
+            subtitle: "能RX绝不降级，今天就是要狠狠干", 
+            reverse: "但身体未必每次都跟得上你的野心", 
+            hyrox: "Hyrox的跑了又跑就是为你这种狠人准备的",
+            theme: {
+                bgGrad: "linear-gradient(135deg, #fef3c7 0%, #fde68a 100%)",
+                cardBg: "#fffbeb",
+                borderColor: "#fcd34d",
+                primary: "#b45309",
+                secondary: "#f59e0b",
+                textDark: "#78350f",
+                textLight: "#b45309"
+            }
+        },
+        GRIT: { 
+            abbr: "GRIT", name: "隐身扫地僧", 
+            quote: "你不一定记得我，但WOD永远难不倒我。", 
+            subtitle: "你不是最炸的，但你最难被淘汰", 
+            reverse: "但你也可能一直被低估，包括你自己", 
+            hyrox: "Hyrox“耐力局”才是你这种低调大神的舞台",
+            theme: {
+                bgGrad: "linear-gradient(135deg, #dcfce7 0%, #bbf7d0 100%)",
+                cardBg: "#f0fdf4",
+                borderColor: "#86efac",
+                primary: "#166534",
+                secondary: "#22c55e",
+                textDark: "#14532d",
+                textLight: "#2e7d32"
+            }
+        },
+        RECO: { 
+            abbr: "RECO", name: "养生榜样", 
+            quote: "强不强是一阵子，练得久是一辈子。", 
+            subtitle: "你轻松愉快，是有原因的", 
+            reverse: "但你也可能因此错过更强的自己", 
+            hyrox: "来HYROX尝试一下比赛强度区间",
+            theme: {
+                bgGrad: "linear-gradient(135deg, #e0e7ff 0%, #c7d2fe 100%)",
+                cardBg: "#f5f3ff",
+                borderColor: "#a5b4fc",
+                primary: "#4338ca",
+                secondary: "#6366f1",
+                textDark: "#1e1b4b",
+                textLight: "#4f46e5"
+            }
+        },
+        FLOW: { 
+            abbr: "FLOW", name: "哲学训练家", 
+            quote: "今天去不去Box，全看云的形状。", 
+            subtitle: "今天练不练，看状态", 
+            reverse: "但状态不会自己变好", 
+            hyrox: "成都站比赛日期已定，治好你的拖延症",
+            theme: {
+                bgGrad: "linear-gradient(135deg, #fce7f3 0%, #fbcfe8 100%)",
+                cardBg: "#fdf2f8",
+                borderColor: "#f9a8d4",
+                primary: "#be185d",
+                secondary: "#ec4899",
+                textDark: "#831843",
+                textLight: "#db2777"
+            }
+        },
+        EXTRA: { 
+            abbr: "EXTR-A", name: "以馆为家", 
+            quote: "馆里灯不灭，我就能加练。", 
+            subtitle: "别人下课，你开第二场", 
+            reverse: "但恢复可能已经在报警", 
+            hyrox: "既然体力溢出，不如来成都站横着走",
+            theme: {
+                bgGrad: "linear-gradient(135deg, #ffedd5 0%, #fed7aa 100%)",
+                cardBg: "#fff7ed",
+                borderColor: "#fdba74",
+                primary: "#c2410c",
+                secondary: "#f97316",
+                textDark: "#7c2d12",
+                textLight: "#ea580c"
+            }
+        },
+        MEAL: { 
+            abbr: "MEAL", name: "嘴强王者", 
+            quote: "我看你练，等于我也练了。", 
+            subtitle: "你们练你们的，我先吃", 
+            reverse: "但你也可能一直停在「围观别人变强」", 
+            hyrox: "Hyrox成都站缺个拉拉队，但更缺个一起火锅的！",
+            theme: {
+                bgGrad: "linear-gradient(135deg, #fef9c3 0%, #fef08a 100%)",
+                cardBg: "#fefce8",
+                borderColor: "#fde047",
+                primary: "#854d0e",
+                secondary: "#eab308",
+                textDark: "#713f12",
+                textLight: "#ca8a04"
+            }
+        },
+        CAM: { 
+            abbr: "CAM", name: "影像艺术家", 
+            quote: "出汗可以少，滤镜必须好。", 
+            subtitle: "PR不是天天有，但出片使命必达", 
+            reverse: "但镜头记录不了真实进步", 
+            hyrox: "HYROX分站赛有摄影师为你而来",
+            theme: {
+                bgGrad: "linear-gradient(135deg, #d9f99d 0%, #bef264 100%)",
+                cardBg: "#f7fee7",
+                borderColor: "#a3e635",
+                primary: "#3f6212",
+                secondary: "#84cc16",
+                textDark: "#1a2e05",
+                textLight: "#4d7c0f"
+            }
+        },
+        PET: { 
+            abbr: "PET", name: "编外饲养员", 
+            quote: "我是来看猫的，顺便来举个重。", 
+            subtitle: "来box的第一件事：跨物种交流", 
+            reverse: "但今天来不是为了它们变强的", 
+            hyrox: "成都站选手包里会不会有猫条？",
+            theme: {
+                bgGrad: "linear-gradient(135deg, #fed7aa 0%, #fdba74 100%)",
+                cardBg: "#fff4e6",
+                borderColor: "#fb923c",
+                primary: "#9a3412",
+                secondary: "#f97316",
+                textDark: "#431407",
+                textLight: "#c2410c"
+            }
+        },
+        RED: { 
+            abbr: "RED", name: "红包猎人", 
+            quote: "WOD 可以落后，抢钱必须第一。", 
+            subtitle: "训练不一定在，红包一定在", 
+            reverse: "但你的进步不会自动到账", 
+            hyrox: "报名费省下的，都是在群里抢回来的",
+            theme: {
+                bgGrad: "linear-gradient(135deg, #fee2e2 0%, #fecaca 100%)",
+                cardBg: "#fef2f2",
+                borderColor: "#fca5a5",
+                primary: "#b91c1c",
+                secondary: "#ef4444",
+                textDark: "#450a0a",
+                textLight: "#dc2626"
+            }
+        },
+        DADDY: { 
+            abbr: "DADD-Y", name: "天使投资人", 
+            quote: "卡我可以不用，但馆你必须得开。", 
+            subtitle: "卡我都有，人我再说", 
+            reverse: "但改变不会发生在「以后再来」里", 
+            hyrox: "成都站专属装备，配得上你尊贵的身份",
+            theme: {
+                bgGrad: "linear-gradient(135deg, #e9d5ff 0%, #d8b4fe 100%)",
+                cardBg: "#faf5ff",
+                borderColor: "#c084fc",
+                primary: "#6b21a5",
+                secondary: "#a855f7",
+                textDark: "#2e1065",
+                textLight: "#7e22ce"
+            }
+        },
+        HANG: { 
+            abbr: "HANG", name: "社群吉祥物", 
+            quote: "训练只是借口，吹壳子才是灵魂。", 
+            subtitle: "我在场，但不一定在练", 
+            reverse: "但身体不会因为你出现而变强", 
+            hyrox: "双人赛了解一下？你最适合带飞队友",
+            theme: {
+                bgGrad: "linear-gradient(135deg, #bfdbfe 0%, #93c5fd 100%)",
+                cardBg: "#eff6ff",
+                borderColor: "#60a5fa",
+                primary: "#1e3a8a",
+                secondary: "#3b82f6",
+                textDark: "#172554",
+                textLight: "#2563eb"
+            }
+        }
+    };
+
+    // 14道题目（内容已按最新附件更新）
+    const questions = [
+        { text: "进Box后你做的第一件事是？", options: [
+            { text: "环顾四周看今天谁来卷了", weights: { PRH:2, RED:1 } },
+            { text: "找个角落静一静，思考为什么要来受刑", weights: { HANG:2, RECO:1 } },
+            { text: "满场找猫/狗，先和毛孩子们热身", weights: { PET:3 } }
+        ] },
+        { text: "当听说今天强度很大时", options: [
+            { text: "马上安排！强度越大我越兴奋", weights: { GRIT:2, PRH:1 } },
+            { text: "假装没看到，有搭子邀约再去吧", weights: { RED:2, HANG:1 } },
+            { text: "算了，今天可能不太宜动，已读不回是最后的温柔", weights: { HANG:2, FLOW:1 } }
+        ] },
+        { text: "关于训练动作标准，你的内心OS是？", options: [
+            { text: "动作不美，PR白给。标准是我的倔强", weights: { TEC:3 } },
+            { text: "只要我做得够快，教练的眼睛就追不上我的借力", weights: { RXP:2, PRH:1 } },
+            { text: "能动就行，活着下课是我对这个Box最大的贡献", weights: { RECO:2, HANG:1 } }
+        ] },
+        { text: "训练状态不好，但这节课已经开始了，你会？", options: [
+            { text: "硬冲！哪怕动作变形也要维持最后的热血", weights: { RXP:2, PRH:1 } },
+            { text: "主动降阶，课是上不完的", weights: { RECO:3 } },
+            { text: "开始频繁去厕所、系鞋带、调整摄像机位", weights: { HANG:2, CAM:1 } }
+        ] },
+        { text: "当教练举着手机走过来拍你时", options: [
+            { text: "瞬间加速，表情管理上线，内心：拍我！快拍我！", weights: { CAM:3 } },
+            { text: "紧张到动作变形", weights: { HANG:2, FLOW:1 } },
+            { text: "拍不拍无所谓，但别发群让我社死啊", weights: { MEAL:2, HANG:1 } }
+        ] },
+        { text: "当教练说降点重量保证质量时", options: [
+            { text: "遵命！教练说的都是金玉良言", weights: { TEC:2, RECO:1 } },
+            { text: "嘴上答应，偷偷加片", weights: { RXP:2, PRH:1, EXTRA:1 } },
+            { text: "内心受挫", weights: { FLOW:2, HANG:1 } }
+        ] },
+        { text: "计时器倒计时3-2-1开始时，你是？", options: [
+            { text: "像离弦的箭，前两分钟猛如虎，后八分钟原地杵", weights: { PRH:2, RXP:1 } },
+            { text: "按照自己的节奏，稳如老狗", weights: { GRIT:3 } },
+            { text: "先看看旁边的人是什么速度，我主打一个陪跑", weights: { FLOW:2, HANG:1 } }
+        ] },
+        { text: "看到有人在旁边刷PR，你的第一反应是？", options: [
+            { text: "哪怕不练了也要围观呐喊，比自己练还累", weights: { RED:2, PRH:1 } },
+            { text: "默默加码，这种该死的胜负欲啊", weights: { PRH:2, RED:1 } },
+            { text: "淡淡一笑，既然他PR了，那我就先撤了", weights: { FLOW:2, HANG:1 } }
+        ] },
+        { text: "计时器结束的那一瞬间，你在做什么？", options: [
+            { text: "冲向黑板记成绩，还要拍张照片", weights: { PRH:2, CAM:1 } },
+            { text: "开始加练，感觉刚才只是热身", weights: { EXTRA:3 } },
+            { text: "拿起泡沫轴，开始长达40分钟的「假拉伸真聊天」", weights: { MEAL:2, HANG:1 } }
+        ] },
+        { text: "一听到Tianfu新的办卡福利，你的态度是？", options: [
+            { text: "别说了，小熊猫一开口，我的钱包就自动打开了", weights: { DADDY:2, PET:1 } },
+            { text: "仔细算账，性价比是成年人最后的底线", weights: { RED:3 } },
+            { text: "卡还有很多，但人已经很久没见，我是天使投资人", weights: { DADDY:3 } }
+        ] },
+        { text: "如果晚上要加班和去Box二选一", options: [
+            { text: "加班？能有训练刺激吗？", weights: { RXP:2, PRH:1 } },
+            { text: "纠结半天，最后去Box洗个澡", weights: { HANG:2, FLOW:1 } },
+            { text: "我会在群里偷看你们流汗", weights: { MEAL:2, RED:1 } }
+        ] },
+        { text: "你的理想训练状态是？", options: [
+            { text: "变强，变壮，问鼎Tianfu之巅", weights: { PRH:2, RXP:1 } },
+            { text: "每天出点汗，认识一群奇葩，晚饭能多吃两碗", weights: { MEAL:2, FLOW:1 } },
+            { text: "主要是为了Tianfu服贸的新款，穿上就是最靓的仔", weights: { CAM:3 } }
+        ] },
+        { text: "如果Hyrox允许带一样东西进赛场，你会带？", options: [
+            { text: "强力能量胶，我是职业的", weights: { PRH:2, GRIT:1 } },
+            { text: "蓝牙音箱，BGM必须是最劲爆的", weights: { CAM:2, EXTRA:1 } },
+            { text: "医护人员，我怕我随时需要就地抢救", weights: { RECO:2, HANG:1 } }
+        ] },
+        { text: "当你发现今天是Hyrox组队训练时，你的反应是？", options: [
+            { text: "组队不是请客吃饭，是奔着RX去的！", weights: { RXP:2, PRH:1 } },
+            { text: "WOD是次要的，中间吹壳子顺不顺畅才是关键", weights: { MEAL:2, HANG:1 } },
+            { text: "看队友在我的鼓励下完成WOD，比我自己练还开心", weights: { GRIT:1, CAM:1, MEAL:1 } }
+        ] }
+    ];
+
+    let scores = {};
+    const tags = Object.keys(PERSONALITIES);
+    tags.forEach(tag => scores[tag] = 0);
+    let userSelections = new Array(questions.length).fill(null);
+    let currentIndex = 0;
+    let finalTag = null;
+
+    const appDiv = document.getElementById('app');
+
+    function escapeHtml(str) {
+        if (!str) return '';
+        return str.replace(/[&<>]/g, function(m) {
+            if (m === '&') return '&amp;';
+            if (m === '<') return '&lt;';
+            if (m === '>') return '&gt;';
+            return m;
+        }).replace(/\n/g, '<br>');
+    }
+
+    function renderQuestion() {
+        const q = questions[currentIndex];
+        const selectedIdx = userSelections[currentIndex];
+        const answeredCount = userSelections.filter(v => v !== null).length;
+        const progressPercent = (answeredCount / questions.length) * 100;
+
+        let optionsHtml = '';
+        const prefixes = ['A', 'B', 'C'];
+        q.options.forEach((opt, idx) => {
+            const isSelected = (selectedIdx === idx);
+            const selectedClass = isSelected ? 'selected' : '';
+            optionsHtml += `
+                <div class="option-btn ${selectedClass}" data-opt-index="${idx}">
+                    <span class="option-prefix">${prefixes[idx]}</span>
+                    <span>${escapeHtml(opt.text)}</span>
+                </div>
+            `;
+        });
+
+        const html = `
+            <div class="card">
+                <div class="progress-area">
+                    <div class="progress-stats">
+                        <span>第 ${currentIndex+1} / ${questions.length} 题</span>
+                        <span>完成度 ${Math.floor(progressPercent)}%</span>
+                    </div>
+                    <div class="progress-bar-bg">
+                        <div class="progress-fill" style="width: ${progressPercent}%;"></div>
+                    </div>
+                </div>
+                <div class="question-text">${escapeHtml(q.text)}</div>
+                <div class="options-list" id="optionsList">
+                    ${optionsHtml}
+                </div>
+                <div class="nav-buttons">
+                    <button class="nav-btn" id="prevBtn" ${currentIndex === 0 ? 'disabled style="opacity:0.4;"' : ''}>◀ 上一题</button>
+                    <button class="nav-btn primary" id="nextBtn">${currentIndex === questions.length-1 ? '揭晓人格' : '下一题 ▶'}</button>
+                </div>
+            </div>
+        `;
+        appDiv.innerHTML = html;
+
+        document.querySelectorAll('.option-btn').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                const idx = parseInt(btn.dataset.optIndex);
+                if (!isNaN(idx)) {
+                    userSelections[currentIndex] = idx;
+                    renderQuestion();
+                }
+            });
+        });
+
+        document.getElementById('prevBtn')?.addEventListener('click', () => {
+            if (currentIndex > 0) {
+                currentIndex--;
+                renderQuestion();
+            }
+        });
+
+        document.getElementById('nextBtn')?.addEventListener('click', () => {
+            if (userSelections[currentIndex] === null) {
+                alert('请先选择一个选项');
+                return;
+            }
+            if (currentIndex === questions.length-1) {
+                computeAndShowResult();
+            } else {
+                currentIndex++;
+                renderQuestion();
+            }
+        });
+    }
+
+    function computeAndShowResult() {
+        tags.forEach(tag => scores[tag] = 0);
+        for (let i = 0; i < questions.length; i++) {
+            const optIdx = userSelections[i];
+            if (optIdx !== null) {
+                const weights = questions[i].options[optIdx].weights;
+                for (let tag in weights) {
+                    if (scores.hasOwnProperty(tag)) scores[tag] += weights[tag];
+                }
+            }
+        }
+        let maxTag = tags[0];
+        let maxScore = scores[maxTag];
+        for (let tag of tags) {
+            if (scores[tag] > maxScore) { maxScore = scores[tag]; maxTag = tag; }
+        }
+        finalTag = maxTag;
+        renderResult();
+    }
+
+    async function shareAsImage() {
+        const element = document.getElementById('share-card');
+        if (!element) return;
+        try {
+            const canvas = await html2canvas(element, {
+                scale: 2.5,
+                backgroundColor: null,
+                logging: false,
+                useCORS: true
+            });
+            const link = document.createElement('a');
+            const date = new Date();
+            const filename = `TFTI_${PERSONALITIES[finalTag].abbr}_${date.getTime()}.png`;
+            link.download = filename;
+            link.href = canvas.toDataURL('image/png');
+            link.click();
+        } catch (err) {
+            console.error('截图失败', err);
+            alert('生成图片失败，可尝试截图保存');
+        }
+    }
+
+    function applyTheme(theme) {
+        // 改变body背景
+        document.body.style.background = theme.bgGrad;
+        // 改变卡片边框色、卡片背景（在结果页动态设置）
+        const resultCard = document.querySelector('.result-card');
+        if (resultCard) {
+            resultCard.style.backgroundColor = theme.cardBg;
+            resultCard.style.borderColor = theme.borderColor;
+        }
+        // 改变强调色类元素（按钮、文字颜色等）—— 使用内联样式或直接设置class，这里简单通过js设置变量
+        document.documentElement.style.setProperty('--theme-primary', theme.primary);
+        document.documentElement.style.setProperty('--theme-secondary', theme.secondary);
+        document.documentElement.style.setProperty('--theme-text-dark', theme.textDark);
+        document.documentElement.style.setProperty('--theme-text-light', theme.textLight);
+    }
+
+    function renderResult() {
+        const p = PERSONALITIES[finalTag];
+        const theme = p.theme;
+        
+        // 动态构建结果页html，并内联主题样式
+        const resultHtml = `
+            <div class="card result-card" style="background: ${theme.cardBg}; border-color: ${theme.borderColor};">
+                <div class="result-prefix" style="color: ${theme.textLight};">你的TFTI人格是</div>
+                <div class="result-abbr" style="color: ${theme.primary};">${escapeHtml(p.abbr)}</div>
+                <div class="result-name" style="color: ${theme.textDark};">${escapeHtml(p.name)}</div>
+                <div class="result-quote" style="color: ${theme.textLight};">“${escapeHtml(p.quote)}”</div>
+                <div><span class="result-subtitle" style="background: ${theme.secondary}20; color: ${theme.primary}; border: 1px solid ${theme.borderColor};">${escapeHtml(p.subtitle)}</span></div>
+                <div class="result-reverse" style="color: ${theme.textLight};">${escapeHtml(p.reverse)}</div>
+                <div class="result-hyrox-block" style="background: ${theme.secondary}10; border: 1px solid ${theme.borderColor};">
+                    <div class="result-hyrox" style="color: ${theme.primary};">${escapeHtml(p.hyrox)}</div>
+                    <div class="result-link"><a href="https://mp.weixin.qq.com/s/tH8yetynYcv-JUbXV2dgXg" target="_blank" style="color: ${theme.primary}; border-bottom-color: ${theme.secondary};">8月1日Hyrox成都站 Tianfu战队等你入列 →</a></div>
+                </div>
+                <button class="share-btn" id="shareImageBtn" style="background: ${theme.primary}; color: white;">生成分享长图</button>
+                <button class="retake-btn" id="retakeBtn" style="background: ${theme.cardBg}; border-color: ${theme.borderColor}; color: ${theme.primary};">重新测试</button>
+            </div>
+        `;
+
+        // 分享卡片（同样应用主题）
+        const shareCardHtml = `
+            <div id="share-card" style="background: ${theme.bgGrad}; padding: 1.8rem; border-radius: 1.5rem; border: 2px solid ${theme.primary}; max-width: 600px; margin: 0 auto; font-family: system-ui, -apple-system, 'Segoe UI', 'PingFang SC', Roboto, sans-serif; text-align: center;">
+                <div style="font-size: 0.85rem; color: ${theme.textLight}; margin-bottom: 0.25rem;">你的TFTI人格是</div>
+                <div style="font-size: 2.2rem; font-weight: 800; color: ${theme.primary};">${escapeHtml(p.abbr)}</div>
+                <div style="font-size: 1.6rem; font-weight: 700; color: ${theme.textDark}; margin-bottom: 0.8rem;">${escapeHtml(p.name)}</div>
+                <div style="font-style: italic; color: ${theme.textLight}; margin: 0.75rem 0;">“${escapeHtml(p.quote)}”</div>
+                <div><span style="font-weight: 700; background: ${theme.secondary}20; display: inline-block; padding: 0.3rem 1rem; border-radius: 2rem; color: ${theme.primary};">${escapeHtml(p.subtitle)}</span></div>
+                <div style="font-size: 0.95rem; color: ${theme.textLight}; margin-top: 0.5rem;">${escapeHtml(p.reverse)}</div>
+                <div style="background: ${theme.secondary}10; padding: 1rem; border-radius: 1rem; margin: 1.2rem 0 0.8rem; border: 1px solid ${theme.borderColor};">
+                    <div style="font-weight: 700; color: ${theme.primary}; margin-bottom: 0.5rem;">${escapeHtml(p.hyrox)}</div>
+                    <div style="font-weight: 700; font-size: 0.9rem;"><a href="https://mp.weixin.qq.com/s/tH8yetynYcv-JUbXV2dgXg" target="_blank" style="color: ${theme.primary}; text-decoration: none; border-bottom: 1px solid ${theme.secondary};">8月1日Hyrox成都站 Tianfu战队等你入列 →</a></div>
+                </div>
+                <div style="margin-top: 1.5rem; font-size: 0.7rem; color: ${theme.textLight};">TFTI练格测试 · AI作品仅供娱乐</div>
+            </div>
+        `;
+
+        appDiv.innerHTML = resultHtml;
+        
+        // 应用body背景主题
+        document.body.style.background = theme.bgGrad;
+
+        const hiddenDiv = document.createElement('div');
+        hiddenDiv.style.position = 'absolute';
+        hiddenDiv.style.left = '-9999px';
+        hiddenDiv.style.top = '0';
+        hiddenDiv.innerHTML = shareCardHtml;
+        document.body.appendChild(hiddenDiv);
+
+        document.getElementById('shareImageBtn')?.addEventListener('click', async () => {
+            const shareElement = document.getElementById('share-card');
+            if (shareElement) {
+                await shareAsImage();
+            } else {
+                alert('生成失败，请重试');
+            }
+        });
+        document.getElementById('retakeBtn')?.addEventListener('click', () => {
+            userSelections = new Array(questions.length).fill(null);
+            currentIndex = 0;
+            finalTag = null;
+            tags.forEach(tag => scores[tag] = 0);
+            // 恢复默认背景
+            document.body.style.background = "linear-gradient(135deg, #e8f5e9 0%, #fce4ec 100%)";
+            renderQuestion();
+            if (hiddenDiv) hiddenDiv.remove();
+        });
+    }
+
+    renderQuestion();
+</script>
+</body>
+</html>
